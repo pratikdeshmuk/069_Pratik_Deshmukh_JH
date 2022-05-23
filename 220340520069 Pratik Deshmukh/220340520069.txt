@@ -1,0 +1,93 @@
+use inception;
+
+-- SECTION 1
+
+create table DEPT( DEPTNO int, DNAME varchar(15), LOC varchar(10));
+Insert into DEPT values(10, 'ACCOUNTING', 'NEW YORK'),
+						(20, 'RESEARCH', 'DALLAS'),
+                        (30, 'SALES', 'CHICAGO'),
+                        (40, 'OPERATIONS', 'BOSTON');
+                        
+create table EMPP(EMPNO int, ENAME varchar(10), JOB varchar(15), HIREDATE date, SAL float(7,2), COMM float(7,2), DEPTNO int);
+Insert into EMPP values (7839, 'KING', 'MANAGER', '1991-11-17', 5000, null, 10),
+					   (7698, 'BLAKE', 'CLERK', '1981-05-01', 2850, null, 30),
+                       (7782, 'CLARK', 'MANAGER', '1981-06-09', 2450, null, 10),
+						(7566, 'JONES', 'CLERK', '1981-04-02', 2975, null, 20),
+						(7654, 'MAARTIN', 'SALESPERSON', '1981-09-28', 1250, 1400, 30),
+						(7499, 'ALLEN', 'SALESPERSON', '1981-02-20', 1600, 300, 30);
+drop table EMPP;
+
+select * from EMPP where SAL between 2000 and 5000;
+
+select ENAME from EMPP order by ENAME desc;
+
+select lower(JOB) from EMPP;
+
+select ENAME, length(ENAME) from EMPP;
+
+select DEPTNO, count(DEPTNO) from EMPP group by DEPTNO;
+
+select DNAME, ENAME from EMPP, DEPT where DEPT.DEPTNO = EMPP.DEPTNO;
+
+select instr(ENAME, 'AR') from EMPP;
+
+select ENAME, SAL*20/100 as HRA from EMPP;
+
+-- SECTION 2
+-- 1)
+create table temppp(res varchar(20));
+drop table temppp;
+
+delimiter //
+create procedure PROC1(s1 varchar(10), s2 varchar(10))
+begin
+declare d int;
+set d = instr(s2, s1);
+if(d=0) then
+		insert into temppp values('Not present');
+	else
+       insert into temppp values('Present');
+       end if;
+       end; //
+       delimiter ;
+       
+       call PROC1('DAC', ' CDAC');
+       drop procedure PROC1;
+       select * from temppp;
+       
+
+
+-- 2)
+
+create table tempp2(res varchar(15));
+drop table tempp2;
+delimiter //
+create function FUNC1(a int, b int, c int)
+returns boolean
+deterministic
+begin
+  if ((a+b)>c and (a+c)>b and (b+c)>a) 
+  then
+  return TRUE ;
+  else 
+    return false;
+    end if;
+    end; //
+    delimiter ;
+    
+delimiter //    
+create procedure tri()
+begin
+     if FUNC1(3,4,5) then
+       insert into tempp2 values('Valid');
+       else  insert into tempp2 values('Invalid');
+       end if;
+       end; //
+       delimiter ;
+call tri();
+drop procedure tri;
+select * from tempp2;
+       
+ 
+
+
